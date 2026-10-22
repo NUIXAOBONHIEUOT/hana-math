@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bé Hana học toán lớp 2 🎀</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Quicksand & Nunito cho nét chữ tròn đáng yêu -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@700&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Canvas Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            pinksoft: '#FFF0F5',      /* Nền hồng phấn lavender */
+            pinkcard: '#FFE4E9',      /* Hồng pastel ngọt ngào */
+            pinkborder: '#F9A8D4',    /* Hồng viền */
+            pinkprimary: '#F472B6',   /* Hồng đậm rực rỡ */
+            pinkaccent: '#EC4899',
+            pinkdark: '#BE185D',
+            goldstar: '#FBBF24',
+          },
+          fontFamily: {
+            kids: ['Quicksand', 'sans-serif'],
+            title: ['Comfortaa', 'cursive'],
+          },
+          boxShadow: {
+            'cute': '0 8px 24px -4px rgba(244, 114, 182, 0.3)',
+            'bubble': '0 6px 0px 0px rgba(236, 72, 153, 0.35)',
+            'btn-pink': '0 5px 0px 0px #db2777',
+            'btn-key': '0 4px 0px 0px #f472b6',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    * {
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background-color: #FFF5F7;
+      background-image: 
+        radial-gradient(#FBCFE8 1.5px, transparent 1.5px),
+        radial-gradient(#FDE2E4 1.5px, #FFF5F7 1.5px);
+      background-size: 36px 36px;
+      background-position: 0 0, 18px 18px;
+    }
+
+    /* Hiệu ứng nơ bay nhẹ nhàng */
+    @keyframes floatRibbon {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-8px) rotate(4deg); }
+    }
+    .float-anim {
+      animation: floatRibbon 3s ease-in-out infinite;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(244, 114, 182, 0.4)); }
+      50% { transform: scale(1.04); filter: drop-shadow(0 0 14px rgba(244, 114, 182, 0.8)); }
+    }
+    .glow-pulse {
+      animation: pulseGlow 2.2s infinite ease-in-out;
+    }
+
+    /* Đặt tính căn lề chữ số chuẩn tiểu học */
+    .digit-box {
+      font-family: 'Comfortaa', 'Quicksand', monospace;
+      letter-spacing: 0.1em;
+    }
+
+    /* Nút bấm 3D mềm mại cho bé */
+    .bubble-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0px 0px rgba(236, 72, 153, 0.3) !important;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-pink-900 flex flex-col justify-between overflow-x-hidden p-2 sm:p-4">
+
+  <!-- ================= TOP HEADER ================= -->
+  <header class="w-full max-w-xl mx-auto bg-white/90 backdrop-blur-md rounded-3xl p-3 sm:p-4 shadow-cute border-2 border-pink-200 mb-3 relative">
+    <!-- Trang trí nơ góc -->
+    <div class="absolute -top-3 -left-2 text-2xl float-anim">🎀</div>
+    <div class="absolute -top-3 -right-2 text-2xl float-anim" style="animation-delay: 1.5s;">🎀</div>
+
+    <div class="flex items-center justify-between">
+      <div class="flex items-center space-x-2">
+        <span class="text-3xl">👑</span>
+        <div>
+          <h1 class="text-lg sm:text-xl font-extrabold text-pinkdark font-title tracking-tight flex items-center gap-1">
+            Bé Hana Học Toán <span class="text-pinkprimary">Lớp 2</span> 🌸
+          </h1>
+          <p class="text-xs text-pink-500 font-semibold">Cộng trừ đặt tính 2 chữ số thật giỏi nào!</p>
+        </div>
+      </div>
+
+      <!-- Nút mở Hộp Nơ Sưu Tập -->
+      <button onclick="openBowModal()" class="flex items-center space-x-1.5 bg-gradient-to-r from-pink-100 to-pink-200 border border-pink-300 px-3 py-1.5 rounded-full text-xs font-bold text-pink-700 hover:scale-105 active:scale-95 transition-all shadow-sm">
+        <span class="text-base">🎀</span>
+        <span>Hộp nơ (<span id="unlockedBowsCount">0</span>/8)</span>
+      </button>
+    </div>
+
+    <!-- Thanh thông số: Điểm sao, Chuỗi đúng, Tổng câu -->
+    <div class="grid grid-cols-3 gap-2 mt-3 pt-2 border-t border-pink-100 text-center">
+      <div class="bg-amber-50 rounded-2xl py-1 px-2 border border-amber-200 flex items-center justify-center gap-1.5">
+        <span class="text-xl">⭐</span>
+        <div class="text-left leading-none">
+          <div class="text-[10px] text-amber-700 font-bold uppercase">Sao vàng</div>
+          <div id="starCount" class="text-base font-extrabold text-amber-600">0</div>
+        </div>
+      </div>
+
+      <div class="bg-pink-50 rounded-2xl py-1 px-2 border border-pink-200 flex items-center justify-center gap-1.5">
+        <span class="text-xl">🎯</span>
+        <div class="text-left leading-none">
+          <div class="text-[10px] text-pink-600 font-bold uppercase">Làm đúng</div>
+          <div class="text-base font-extrabold text-pinkprimary"><span id="correctCount">0</span>/<span id="totalCount">0</span></div>
+        </div>
+      </div>
+
+      <div class="bg-rose-50 rounded-2xl py-1 px-2 border border-rose-200 flex items-center justify-center gap-1.5">
+        <span class="text-xl">🔥</span>
+        <div class="text-left leading-none">
+          <div class="text-[10px] text-rose-600 font-bold uppercase">Chuỗi đúng</div>
+          <div id="streakCount" class="text-base font-extrabold text-rose-500">0</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= BỘ ĐIỀU KHIỂN CHỌN CHẾ ĐỘ ================= -->
+  <section class="w-full max-w-xl mx-auto bg-white/80 rounded-2xl p-2.5 shadow-sm border border-pink-100 mb-3">
+    <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+      <!-- Phép tính -->
+      <div class="flex items-center gap-1 bg-pink-50 p-1 rounded-xl">
+        <button id="op-all" onclick="setOperation('all')" class="op-btn px-2.5 py-1 rounded-lg font-bold bg-pinkprimary text-white shadow-sm">🎲 Hỗn hợp</button>
+        <button id="op-add" onclick="setOperation('add')" class="op-btn px-2.5 py-1 rounded-lg font-bold text-pink-600 hover:bg-pink-100">➕ Cộng</button>
+        <button id="op-sub" onclick="setOperation('sub')" class="op-btn px-2.5 py-1 rounded-lg font-bold text-pink-600 hover:bg-pink-100">➖ Trừ</button>
+      </div>
+
+      <!-- Độ khó -->
+      <div class="flex items-center gap-1 bg-pink-50 p-1 rounded-xl">
+        <button id="diff-easy" onclick="setDifficulty('easy')" class="diff-btn px-2.5 py-1 rounded-lg font-bold bg-white text-pinkprimary shadow-sm border border-pink-200">🌱 Không nhớ</button>
+        <button id="diff-carry" onclick="setDifficulty('carry')" class="diff-btn px-2.5 py-1 rounded-lg font-bold text-pink-500 hover:bg-pink-100">✨ Có nhớ</button>
+        <button id="diff-random" onclick="setDifficulty('random')" class="diff-btn px-2.5 py-1 rounded-lg font-bold text-pink-500 hover:bg-pink-100">🌈 Tự do</button>
+      </div>
+
+      <!-- Nút âm thanh -->
+      <button onclick="toggleSound()" id="soundBtn" class="px-2.5 py-1 bg-pink-100 text-pink-700 rounded-lg font-bold flex items-center gap-1 hover:bg-pink-200">
+        <span id="soundIcon">🔊</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ================= KHU VỰC BÀI TOÁN CHÍNH ================= -->
+  <main class="w-full max-w-xl mx-auto flex-1 flex flex-col items-center justify-center relative">
+    
+    <!-- Khung đặt tính cột dọc dễ thương -->
+    <div class="w-full bg-gradient-to-b from-white via-pink-50/70 to-pinkcard rounded-3xl p-5 sm:p-6 shadow-cute border-4 border-pink-200 relative mb-3">
+      
+      <!-- Trang trí góc -->
+      <div class="absolute -top-4 left-6 bg-pink-500 text-white text-xs font-bold px-3 py-0.5 rounded-full shadow flex items-center gap-1">
+        <span>🎀</span> Đặt tính rồi tính
+      </div>
+      <div class="absolute top-3 right-4 text-pink-300 text-sm">💖 ✨ 🎀</div>
+
+      <div class="flex flex-col items-center justify-center my-1">
+        <!-- Bảng Cột Dọc Đặt Tính Chuẩn -->
+        <div class="inline-block relative">
+          
+          <!-- Hướng dẫn cột: Chục & Đơn vị -->
+          <div class="flex justify-end text-[11px] font-bold text-pink-400 mb-1 pr-3 gap-6">
+            <span>Chục</span>
+            <span>Đ.vị</span>
+          </div>
+
+          <!-- Số trên -->
+          <div class="text-right text-4xl sm:text-5xl font-black text-pinkdark digit-box pr-3 tracking-[0.25em]">
+            <span id="num1Tens">4</span><span id="num1Units">8</span>
+          </div>
+
+          <!-- Số dưới cùng dấu phép tính -->
+          <div class="flex items-center justify-end text-4xl sm:text-5xl font-black text-pinkdark digit-box mt-1">
+            <span id="opSymbol" class="text-3xl sm:text-4xl text-pinkaccent font-extrabold mr-4 float-anim">➕</span>
+            <div class="text-right tracking-[0.25em] pr-3">
+              <span id="num2Tens">2</span><span id="num2Units">5</span>
+            </div>
+          </div>
+
+          <!-- Dấu gạch ngang màu hồng tiểu học -->
+          <div class="w-full my-2 h-1 bg-pink-400 rounded-full shadow-sm"></div>
+
+          <!-- Ô hiển thị kết quả bé nhập -->
+          <div class="flex justify-end pr-2 pt-1">
+            <div id="displayAnswer" class="w-36 sm:w-44 h-14 sm:h-16 bg-white border-2 border-dashed border-pink-400 rounded-2xl flex items-center justify-end px-4 text-3xl sm:text-4xl font-black text-pink-700 digit-box shadow-inner tracking-[0.2em] relative">
+              <span id="userAnswerText" class="text-pinkdark"></span>
+              <span id="cursor" class="inline-block w-1 h-7 bg-pinkprimary rounded animate-pulse ml-1"></span>
+              <!-- Gợi ý nhấp nháy khi chưa điền -->
+              <span id="placeholderText" class="absolute inset-0 flex items-center justify-center text-pink-300 text-base font-normal pointer-events-none">
+                Bấm số ở dưới...
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông báo kết quả / Khen ngợi -->
+      <div id="feedbackBox" class="mt-3 min-h-[44px] flex items-center justify-center text-center px-2">
+        <div id="feedbackText" class="text-sm sm:text-base font-bold text-pink-600 transition-all">
+          Bé Hana hãy nhẩm tính hàng đơn vị trước nhé! 💕
+        </div>
+      </div>
+
+      <!-- Nút xem gợi ý từng bước (nếu làm sai) -->
+      <div id="hintContainer" class="hidden mt-2 p-3 bg-pink-100/90 rounded-2xl border border-pink-300 text-xs text-pink-800">
+        <div class="font-extrabold text-pink-700 flex items-center gap-1 mb-1">
+          <span>💡</span> Gợi ý cô tiên nơ giúp Hana:
+        </div>
+        <div id="hintContent"></div>
+      </div>
+
+    </div>
+
+    <!-- ================= BÀN PHÍM SỐ ẢO ================= -->
+    <div class="w-full bg-white/90 rounded-3xl p-3 shadow-cute border-2 border-pink-200">
+      <div class="grid grid-cols-3 gap-2 max-w-sm mx-auto">
+        <!-- Phím 1-9 -->
+        <button onclick="pressNum('1')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">1</button>
+        <button onclick="pressNum('2')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">2</button>
+        <button onclick="pressNum('3')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">3</button>
+
+        <button onclick="pressNum('4')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">4</button>
+        <button onclick="pressNum('5')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">5</button>
+        <button onclick="pressNum('6')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">6</button>
+
+        <button onclick="pressNum('7')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">7</button>
+        <button onclick="pressNum('8')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">8</button>
+        <button onclick="pressNum('9')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">9</button>
+
+        <!-- Nút Xóa (Delete/Backspace) -->
+        <button onclick="deleteDigit()" class="bubble-btn h-12 sm:h-14 bg-rose-100 text-rose-600 hover:bg-rose-200 rounded-2xl text-lg font-black border-2 border-rose-300 shadow-btn-key flex items-center justify-center gap-1 transition-all">
+          <span>⌫</span> <span class="text-xs">Xóa</span>
+        </button>
+
+        <!-- Phím 0 -->
+        <button onclick="pressNum('0')" class="bubble-btn h-12 sm:h-14 bg-pink-50 text-pink-700 hover:bg-pink-100 rounded-2xl text-2xl font-black border-2 border-pink-200 shadow-btn-key transition-all">0</button>
+
+        <!-- Nút Kiểm tra / Nộp bài -->
+        <button id="submitBtn" onclick="checkAnswer()" class="bubble-btn h-12 sm:h-14 bg-gradient-to-r from-pinkprimary to-pinkaccent text-white rounded-2xl text-lg font-black border-2 border-pink-400 shadow-btn-pink flex items-center justify-center gap-1 hover:brightness-105 active:brightness-95 transition-all">
+          <span>🎀</span> <span>Kiểm tra</span>
+        </button>
+      </div>
+
+      <!-- Nút đổi câu khác (nếu muốn bỏ qua) -->
+      <div class="mt-2 text-center">
+        <button onclick="skipQuestion()" class="text-xs text-pink-500 hover:text-pink-700 font-semibold underline underline-offset-2">
+          Đổi phép tính khác ✨
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- ================= FOOTER DỄ THƯƠNG ================= -->
+  <footer class="w-full max-w-xl mx-auto text-center py-2 text-[11px] text-pink-400 font-medium">
+    Bé Hana chăm học mỗi ngày cùng ba mẹ 🌸 Yêu thương & Tự tin với môn Toán!
+  </footer>
+
+  <!-- ================= MODAL HỘP NƠ SƯU TẬP ================= -->
+  <div id="bowModal" class="fixed inset-0 bg-pink-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-5 max-w-sm w-full border-4 border-pink-300 shadow-cute relative transform transition-all scale-95 duration-200" id="bowModalContent">
+      <button onclick="closeBowModal()" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-pink-100 text-pink-600 font-black flex items-center justify-center hover:bg-pink-200">✕</button>
+      
+      <div class="text-center mb-4">
+        <div class="text-3xl float-anim">🎀✨</div>
+        <h2 class="text-lg font-black text-pinkdark font-title">Hộp Nơ Phép Thuật Của Hana</h2>
+        <p class="text-xs text-pink-500 mt-1">Cứ làm đúng <span class="font-bold text-pinkprimary">5 câu</span> bé sẽ mở khóa thêm 1 chiếc nơ xinh xắn!</p>
+      </div>
+
+      <!-- Lưới 8 nơ phép thuật -->
+      <div id="bowGrid" class="grid grid-cols-4 gap-2 text-center my-3">
+        <!-- Render bằng Javascript -->
+      </div>
+
+      <div class="mt-4 pt-3 border-t border-pink-100 flex justify-center">
+        <button onclick="closeBowModal()" class="bg-pinkprimary text-white font-bold px-6 py-2 rounded-full text-xs shadow-btn-pink hover:bg-pinkaccent active:scale-95 transition-all">
+          Đóng và Tiếp tục học 💖
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL CHÚC MỪNG MỞ KHÓA NƠ MỚI ================= -->
+  <div id="newBowUnlockModal" class="fixed inset-0 bg-pink-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-3xl p-6 max-w-xs w-full text-center border-4 border-pink-400 shadow-2xl relative animate-bounce">
+      <div class="text-6xl my-2" id="unlockedBowEmoji">🎀</div>
+      <h3 class="text-xl font-black text-pinkdark">Hoan Hô Bé Hana! 🎉</h3>
+      <p class="text-xs text-pink-600 font-bold mt-1" id="unlockedBowTitle">Bé vừa mở khóa: Nơ Thỏ Hồng Xinh</p>
+      <p class="text-[11px] text-pink-400 mt-2">Chiếc nơ phép thuật đã được thêm vào hộp sưu tập của bé!</p>
+      <button onclick="closeNewBowModal()" class="mt-4 w-full bg-gradient-to-r from-pinkprimary to-pinkaccent text-white font-extrabold py-2.5 rounded-full text-sm shadow-btn-pink hover:scale-105 active:scale-95 transition-all">
+        Tuyệt vời quá! 🌸
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    /* 1. KHỞI TẠO ÂM THANH BẰNG WEB AUDIO API */
+    let audioCtx = null;
+    let soundEnabled = true;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+      return audioCtx;
+    }
+
+    function playTone(freq, type, duration, startTime = 0) {
+      if (!soundEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + startTime);
+
+        gain.gain.setValueAtTime(0.18, ctx.currentTime + startTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + startTime + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime + startTime);
+        osc.stop(ctx.currentTime + startTime + duration);
+      } catch (e) {
+        console.error("Audio error:", e);
+      }
+    }
+
+    function soundClick() {
+      playTone(520, 'sine', 0.08);
+    }
+
+    function soundCorrect() {
+      if (!soundEnabled) return;
+      // Arpeggio nốt nhạc vui mừng (Đô - Mi - Sol - Đố)
+      playTone(523.25, 'triangle', 0.18, 0);       // C5
+      playTone(659.25, 'triangle', 0.18, 0.12);    // E5
+      playTone(783.99, 'triangle', 0.2, 0.24);     // G5
+      playTone(1046.50, 'triangle', 0.4, 0.36);    // C6
+    }
+
+    function soundWrong() {
+      if (!soundEnabled) return;
+      // Âm thanh trầm nhẹ động viên
+      playTone(330, 'sine', 0.15, 0);
+      playTone(280, 'sine', 0.25, 0.12);
+    }
+
+    function soundFanfare() {
+      if (!soundEnabled) return;
+      playTone(587.33, 'triangle', 0.2, 0);
+      playTone(880.00, 'triangle', 0.25, 0.15);
+      playTone(1174.66, 'triangle', 0.5, 0.3);
+    }
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+      document.getElementById('soundIcon').innerText = soundEnabled ? '🔊' : '🔇';
+    }
+
+    /* 2. DỮ LIỆU BỘ SƯU TẬP NƠ CỦA HANA */
+    const bowCollection = [
+      { id: 1, name: "Nơ Hồng Baby", emoji: "🎀", desc: "Nơ hồng mềm mại đầu tiên của Hana" },
+      { id: 2, name: "Nơ Thỏ Trắng", emoji: "🐰", desc: "Nơ thỏ trắng tinh nghịch" },
+      { id: 3, name: "Nơ Dâu Tây", emoji: "🍓", desc: "Chiếc nơ ngọt ngào thơm mùi dâu" },
+      { id: 4, name: "Nơ Hoa Anh Đào", emoji: "🌸", desc: "Cánh hoa anh đào phất phới" },
+      { id: 5, name: "Nơ Vương Miện", emoji: "👑", desc: "Công chúa Hana vương miện vàng" },
+      { id: 6, name: "Nơ Ngôi Sao", emoji: "⭐", desc: "Ngôi sao lấp lánh thông minh" },
+      { id: 7, name: "Nơ Cầu Vồng", emoji: "🌈", desc: "Rực rỡ sắc màu diệu kỳ" },
+      { id: 8, name: "Nơ Phép Thuật", emoji: "✨", desc: "Nơ nữ hoàng toán học lớp 2" },
+    ];
+
+    /* 3. TRẠNG THÁI TRÒ CHƠI */
+    let currentOp = 'all';       // 'all', 'add', 'sub'
+    let currentDiff = 'carry';    // 'easy', 'carry', 'random'
+    let num1 = 45;
+    let num2 = 28;
+    let operator = '+';
+    let correctAnswer = 73;
+    let currentInput = "";
+    let starCount = 0;
+    let correctCount = 0;
+    let totalCount = 0;
+    let streakCount = 0;
+    let unlockedBows = [1];      // Mặc định mở nơ 1
+
+    // Danh sách lời khen dễ thương cho bé
+    const praises = [
+      "Bé Hana giỏi quá chừng! 🌸",
+      "Tuyệt vời quá Hana ơi! 🎀",
+      "Công chúa Hana tính chuẩn luôn! ✨",
+      "Đúng rồi, Hana thông minh lắm! 💖",
+      "Xuất sắc! Thưởng bé thêm 1 ngôi sao vàng! ⭐",
+      "Hana làm toán siêu đẳng ghê! 🦄"
+    ];
+
+    const encourages = [
+      "Bé Hana thử lại một lần nữa nhé! 💕",
+      "Gần đúng rồi, Hana tính cẩn thận hàng đơn vị nè! 🎀",
+      "Cố lên công chúa ơi, bé làm được mà! 🌸",
+      "Không sao đâu, bé bấm phím Xóa rồi điền lại nha! ✨"
+    ];
+
+    /* 4. SINH BÀI TẬP CỘNG TRỪ 2 CHỮ SỐ LỚP 2 */
+    function generateQuestion() {
+      currentInput = "";
+      updateInputDisplay();
+      hideHint();
+
+      // Quyết định phép tính
+      if (currentOp === 'all') {
+        operator = Math.random() > 0.5 ? '+' : '-';
+      } else if (currentOp === 'add') {
+        operator = '+';
+      } else {
+        operator = '-';
+      }
+
+      // Quyết định loại: có nhớ hay không nhớ
+      let isCarry = false;
+      if (currentDiff === 'carry') isCarry = true;
+      else if (currentDiff === 'easy') isCarry = false;
+      else isCarry = Math.random() > 0.5;
+
+      let n1, n2;
+
+      if (operator === '+') {
+        // Phép cộng 2 chữ số (tổng < 100 hoặc tổng 2 chữ số)
+        let tens1 = Math.floor(Math.random() * 8) + 1; // 1 -> 8
+        let maxTens2 = 9 - tens1;
+        let tens2 = Math.floor(Math.random() * Math.max(1, maxTens2)) + 1;
+
+        let unit1, unit2;
+        if (isCarry) {
+          // Có nhớ: unit1 + unit2 >= 10
+          unit1 = Math.floor(Math.random() * 8) + 2; // 2 -> 9
+          let minUnit2 = 10 - unit1;
+          unit2 = Math.floor(Math.random() * (10 - minUnit2)) + minUnit2;
+          if (unit2 > 9) unit2 = 9;
+        } else {
+          // Không nhớ: unit1 + unit2 < 10
+          unit1 = Math.floor(Math.random() * 9) + 1;
+          let maxUnit2 = 9 - unit1;
+          unit2 = Math.floor(Math.random() * (maxUnit2 + 1));
+        }
+
+        n1 = tens1 * 10 + unit1;
+        n2 = tens2 * 10 + unit2;
+        correctAnswer = n1 + n2;
+      } else {
+        // Phép trừ 2 chữ số (Số bị trừ >= Số trừ, n1 >= 20)
+        let tens1 = Math.floor(Math.random() * 8) + 2; // 2 -> 9
+        let tens2 = Math.floor(Math.random() * (tens1 - 1)) + 1; // 1 -> tens1-1
+
+        let unit1, unit2;
+        if (isCarry) {
+          // Có nhớ: unit1 < unit2
+          unit1 = Math.floor(Math.random() * 8); // 0 -> 7
+          unit2 = Math.floor(Math.random() * (9 - unit1)) + (unit1 + 1); // unit1 + 1 -> 9
+        } else {
+          // Không nhớ: unit1 >= unit2
+          unit1 = Math.floor(Math.random() * 9) + 1; // 1 -> 9
+          unit2 = Math.floor(Math.random() * (unit1 + 1)); // 0 -> unit1
+        }
+
+        n1 = tens1 * 10 + unit1;
+        n2 = tens2 * 10 + unit2;
+
+        // Đảm bảo không âm
+        if (n1 < n2) {
+          let temp = n1; n1 = n2; n2 = temp;
+        }
+        correctAnswer = n1 - n2;
+      }
+
+      num1 = n1;
+      num2 = n2;
+
+      // Cập nhật giao diện đặt tính
+      renderProblem();
+    }
+
+    function renderProblem() {
+      const s1 = num1.toString();
+      const s2 = num2.toString();
+
+      document.getElementById('num1Tens').innerText = s1.length > 1 ? s1[0] : ' ';
+      document.getElementById('num1Units').innerText = s1[s1.length - 1];
+
+      document.getElementById('num2Tens').innerText = s2.length > 1 ? s2[0] : ' ';
+      document.getElementById('num2Units').innerText = s2[s2.length - 1];
+
+      document.getElementById('opSymbol').innerText = operator === '+' ? '➕' : '➖';
+
+      // Reset feedback
+      const fb = document.getElementById('feedbackText');
+      fb.className = "text-sm sm:text-base font-bold text-pink-600";
+      fb.innerHTML = "Bé hãy tính từ hàng đơn vị trước nha! 🌸";
+    }
+
+    /* 5. XỬ LÝ NHẬP PHÍM SỐ */
+    function pressNum(digit) {
+      soundClick();
+      if (currentInput.length >= 3) return; // Kết quả tối đa 3 chữ số (VD: 99+99 = 198)
+      currentInput += digit;
+      updateInputDisplay();
+    }
+
+    function deleteDigit() {
+      soundClick();
+      if (currentInput.length > 0) {
+        currentInput = currentInput.slice(0, -1);
+        updateInputDisplay();
+      }
+    }
+
+    function updateInputDisplay() {
+      const textElem = document.getElementById('userAnswerText');
+      const placeholder = document.getElementById('placeholderText');
+      textElem.innerText = currentInput;
+
+      if (currentInput.length > 0) {
+        placeholder.classList.add('hidden');
+      } else {
+        placeholder.classList.remove('hidden');
+      }
+    }
+
+    /* 6. KIỂM TRA ĐÁP ÁN */
+    function checkAnswer() {
+      if (currentInput === "") {
+        soundWrong();
+        const fb = document.getElementById('feedbackText');
+        fb.innerText = "Bé Hana chưa điền kết quả kìa! Bé bấm số nhé 🎀";
+        fb.className = "text-sm sm:text-base font-bold text-rose-500 animate-pulse";
+        return;
+      }
+
+      const userVal = parseInt(currentInput, 10);
+      totalCount++;
+      document.getElementById('totalCount').innerText = totalCount;
+
+      if (userVal === correctAnswer) {
+        // Đúng!
+        soundCorrect();
+        triggerConfetti();
+        starCount += 1;
+        correctCount += 1;
+        streakCount += 1;
+
+        document.getElementById('starCount').innerText = starCount;
+        document.getElementById('correctCount').innerText = correctCount;
+        document.getElementById('streakCount').innerText = streakCount;
+
+        const randomPraise = praises[Math.floor(Math.random() * praises.length)];
+        const fb = document.getElementById('feedbackText');
+        fb.innerHTML = `<span class="text-green-600 font-extrabold text-base sm:text-lg">🎉 ${randomPraise}</span>`;
+
+        // Kiểm tra mở khóa nơ mới (cứ mỗi 5 câu đúng)
+        checkBowUnlock();
+
+        // Tự động chuyển câu sau 1.6 giây
+        setTimeout(() => {
+          generateQuestion();
+        }, 1600);
+
+      } else {
+        // Sai
+        soundWrong();
+        streakCount = 0;
+        document.getElementById('streakCount').innerText = streakCount;
+
+        const randomEncourage = encourages[Math.floor(Math.random() * encourages.length)];
+        const fb = document.getElementById('feedbackText');
+        fb.innerHTML = `<span class="text-rose-500 font-bold">${randomEncourage}</span>`;
+
+        // Hiển thị nút gợi ý
+        showHint();
+      }
+    }
+
+    /* 7. GỢI Ý ĐẶT TÍNH TỪNG BƯỚC */
+    function showHint() {
+      const hintBox = document.getElementById('hintContainer');
+      const hintContent = document.getElementById('hintContent');
+      hintBox.classList.remove('hidden');
+
+      const u1 = num1 % 10;
+      const t1 = Math.floor(num1 / 10);
+      const u2 = num2 % 10;
+      const t2 = Math.floor(num2 / 10);
+
+      if (operator === '+') {
+        const sumUnits = u1 + u2;
+        if (sumUnits >= 10) {
+          const writeU = sumUnits % 10;
+          hintContent.innerHTML = `
+            • <b>Bước 1:</b> Cộng hàng đơn vị: ${u1} + ${u2} = ${sumUnits}. Viết <b>${writeU}</b>, <i>nhớ 1 sang hàng chục</i>.<br>
+            • <b>Bước 2:</b> Cộng hàng chục: ${t1} + ${t2} = ${t1 + t2}, thêm 1 đã nhớ là <b>${t1 + t2 + 1}</b>.<br>
+            ✨ <i>Kết quả đúng là: ${correctAnswer}</i>
+          `;
+        } else {
+          hintContent.innerHTML = `
+            • <b>Bước 1:</b> Hàng đơn vị: ${u1} + ${u2} = <b>${sumUnits}</b>.<br>
+            • <b>Bước 2:</b> Hàng chục: ${t1} + ${t2} = <b>${t1 + t2}</b>.<br>
+            ✨ <i>Kết quả đúng là: ${correctAnswer}</i>
+          `;
+        }
+      } else {
+        if (u1 < u2) {
+          hintContent.innerHTML = `
+            • <b>Bước 1:</b> Hàng đơn vị: ${u1} không trừ được ${u2}, lấy 1${u1} - ${u2} = <b>${10 + u1 - u2}</b>, <i>nhớ 1 sang số trừ hàng chục</i>.<br>
+            • <b>Bước 2:</b> Hàng chục: ${t2} thêm 1 là ${t2 + 1}. Lấy ${t1} - ${t2 + 1} = <b>${t1 - (t2 + 1)}</b>.<br>
+            ✨ <i>Kết quả đúng là: ${correctAnswer}</i>
+          `;
+        } else {
+          hintContent.innerHTML = `
+            • <b>Bước 1:</b> Hàng đơn vị: ${u1} - ${u2} = <b>${u1 - u2}</b>.<br>
+            • <b>Bước 2:</b> Hàng chục: ${t1} - ${t2} = <b>${t1 - t2}</b>.<br>
+            ✨ <i>Kết quả đúng là: ${correctAnswer}</i>
+          `;
+        }
+      }
+    }
+
+    function hideHint() {
+      document.getElementById('hintContainer').classList.add('hidden');
+    }
+
+    function skipQuestion() {
+      soundClick();
+      generateQuestion();
+    }
+
+    /* 8. MỞ KHÓA VÀ QUẢN LÝ BỘ SƯU TẬP NƠ */
+    function checkBowUnlock() {
+      // Mỗi 5 câu đúng mở 1 nơ mới
+      const requiredBows = Math.floor(correctCount / 5) + 1;
+      const targetBowId = Math.min(requiredBows, bowCollection.length);
+
+      if (!unlockedBows.includes(targetBowId) && targetBowId <= bowCollection.length) {
+        unlockedBows.push(targetBowId);
+        updateBowBadgeCount();
+        
+        // Mở popup chúc mừng nơ mới
+        setTimeout(() => {
+          const newBow = bowCollection.find(b => b.id === targetBowId);
+          if (newBow) {
+            document.getElementById('unlockedBowEmoji').innerText = newBow.emoji;
+            document.getElementById('unlockedBowTitle').innerText = `Bé mở khóa: ${newBow.name}!`;
+            document.getElementById('newBowUnlockModal').classList.remove('hidden');
+            soundFanfare();
+            triggerConfetti();
+          }
+        }, 800);
+      }
+    }
+
+    function updateBowBadgeCount() {
+      document.getElementById('unlockedBowsCount').innerText = unlockedBows.length;
+    }
+
+    function renderBowCollectionGrid() {
+      const grid = document.getElementById('bowGrid');
+      grid.innerHTML = "";
+
+      bowCollection.forEach(bow => {
+        const isUnlocked = unlockedBows.includes(bow.id);
+        const card = document.createElement('div');
+        card.className = `p-2.5 rounded-2xl border-2 flex flex-col items-center justify-center transition-all ${
+          isUnlocked 
+            ? 'bg-pink-50 border-pink-300 shadow-sm' 
+            : 'bg-gray-100 border-dashed border-gray-300 opacity-60'
+        }`;
+
+        card.innerHTML = `
+          <div class="text-3xl mb-1 ${isUnlocked ? 'float-anim' : 'grayscale'}">
+            ${isUnlocked ? bow.emoji : '🔒'}
+          </div>
+          <div class="text-[10px] font-bold ${isUnlocked ? 'text-pink-700' : 'text-gray-400'} line-clamp-1">
+            ${bow.name}
+          </div>
+          <div class="text-[9px] text-pink-400">
+            ${isUnlocked ? 'Đã có' : `Cần ${bow.id * 5} ⭐`}
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function openBowModal() {
+      soundClick();
+      renderBowCollectionGrid();
+      const modal = document.getElementById('bowModal');
+      modal.classList.remove('hidden');
+      const content = document.getElementById('bowModalContent');
+      setTimeout(() => {
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+      }, 10);
+    }
+
+    function closeBowModal() {
+      soundClick();
+      const modal = document.getElementById('bowModal');
+      const content = document.getElementById('bowModalContent');
+      content.classList.remove('scale-100');
+      content.classList.add('scale-95');
+      setTimeout(() => {
+        modal.classList.add('hidden');
+      }, 150);
+    }
+
+    function closeNewBowModal() {
+      soundClick();
+      document.getElementById('newBowUnlockModal').classList.add('hidden');
+    }
+
+    /* 9. THIẾT LẬP BỘ LỌC CHẾ ĐỘ */
+    function setOperation(op) {
+      soundClick();
+      currentOp = op;
+      document.querySelectorAll('.op-btn').forEach(btn => {
+        btn.className = "op-btn px-2.5 py-1 rounded-lg font-bold text-pink-600 hover:bg-pink-100";
+      });
+      const activeBtn = document.getElementById(`op-${op}`);
+      if (activeBtn) {
+        activeBtn.className = "op-btn px-2.5 py-1 rounded-lg font-bold bg-pinkprimary text-white shadow-sm";
+      }
+      generateQuestion();
+    }
+
+    function setDifficulty(diff) {
+      soundClick();
+      currentDiff = diff;
+      document.querySelectorAll('.diff-btn').forEach(btn => {
+        btn.className = "diff-btn px-2.5 py-1 rounded-lg font-bold text-pink-500 hover:bg-pink-100";
+      });
+      const activeBtn = document.getElementById(`diff-${diff}`);
+      if (activeBtn) {
+        activeBtn.className = "diff-btn px-2.5 py-1 rounded-lg font-bold bg-white text-pinkprimary shadow-sm border border-pink-200";
+      }
+      generateQuestion();
+    }
+
+    /* 10. HIỆU ỨNG PHÁO HOA & TRÁI TIM */
+    function triggerConfetti() {
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 50,
+          spread: 70,
+          origin: { y: 0.65 },
+          colors: ['#F472B6', '#FBBF24', '#F43F5E', '#EC4899', '#A855F7']
+        });
+      }
+    }
+
+    /* 11. HỖ TRỢ BÀN PHÍM VẬT LÝ CHO MÁY TÍNH */
+    window.addEventListener('keydown', (e) => {
+      if (e.key >= '0' && e.key <= '9') {
+        pressNum(e.key);
+      } else if (e.key === 'Backspace') {
+        deleteDigit();
+      } else if (e.key === 'Enter') {
+        checkAnswer();
+      }
+    });
+
+    /* KHỞI ĐỘNG KHI TẢI TRANG */
+    window.onload = function () {
+      updateBowBadgeCount();
+      generateQuestion();
+    };
+  </script>
+</body>
+</html>
